@@ -1,0 +1,22 @@
+{
+  "name": "secure-exam-paper-client",
+  "version": "1.0.0",
+  "private": true,
+  "description": "React frontend for the Secure Exam Paper Distribution System",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "axios": "^1.6.7",
+    "lucide-react": "^0.468.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.2"
+  },
+  "devDependencies": {
+    "vite": "^5.1.4"
+  }
+}

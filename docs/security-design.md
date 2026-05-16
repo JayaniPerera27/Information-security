@@ -58,3 +58,18 @@ When a lecturer submits an exam paper:
 8. The encrypted paper is stored in local encrypted storage.
 9. Submission metadata, encrypted session key, hash, signature, IV, and authentication tag are stored in MongoDB.
 10. An audit log is created for the submission event.
+
+## Exam Officer Receive Workflow
+
+When an exam officer receives a submitted paper:
+
+1. The exam officer logs in and views only submissions assigned to their account.
+2. The officer can verify the lecturer's digital signature using the lecturer's stored public key.
+3. The officer selects their private key file when decrypting the paper.
+4. The backend decrypts the AES session key using the exam officer's private key.
+5. The backend decrypts the encrypted paper using AES-256-GCM.
+6. The backend recalculates the SHA-256 hash of the decrypted paper.
+7. The recalculated hash is compared with the original stored hash.
+8. The system reports whether the signature is valid, integrity check passed, and decryption succeeded.
+9. If all checks pass, the decrypted paper is returned to the officer for download.
+10. Verification and decryption events are recorded in audit logs.

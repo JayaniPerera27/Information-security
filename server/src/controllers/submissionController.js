@@ -5,8 +5,11 @@ const User = require("../models/User");
 const {
   hashBuffer,
   signHash,
+  verifyHashSignature,
   encryptFileBuffer,
-  encryptSessionKey
+  encryptSessionKey,
+  decryptSessionKey,
+  decryptFileBuffer
 } = require("../services/cryptoService");
 const { createAuditLog } = require("../services/auditService");
 
@@ -151,12 +154,155 @@ const getSubmissionById = async (req, res) => {
   }
 };
 
+const findAssignedSubmission = async (submissionId, userId) => {
+  const submission = await Submission.findById(submissionId)
+    .populate("lecturer", "name email role publicKey")
+    .populate("examOfficer", "name email role publicKey");
+
+  if (!submission) {
+    return null;
+  }
+
+  if (!submission.examOfficer._id.equals(userId)) {
+    const error = new Error("You do not have permission to access this submission");
+    error.statusCode = 403;
+    throw error;
+  }
+
+  return submission;
+};
+
 const verifySubmission = async (req, res) => {
-  res.status(501).json({ message: "Submission verification controller not implemented yet" });
+  try {
+    const submission = await findAssignedSubmission(req.params.id, req.user._id);
+
+    if (!submission) {
+      return res.status(404).json({ message: "Submission not found" });
+    }
+
+    if (!submission.lecturer.publicKey) {
+      return res.status(400).json({ message: "Lecturer public key is not available" });
+    }
+
+    const signatureValid = verifyHashSignature(
+      submission.fileHash,
+      submission.digitalSignature,
+      submission.lecturer.publicKey
+    );
+
+    submission.status = signatureValid ? "verified" : "rejected";
+    await submission.save();
+
+    await createAuditLog({
+      user: req.user._id,
+      action: "SUBMISSION_VERIFIED",
+      resourceType: "Submission",
+      resourceId: submission._id.toString(),
+      status: signatureValid ? "success" : "failure",
+      details: signatureValid ? "Digital signature is valid" : "Digital signature is invalid",
+      ipAddress: req.ip
+    });
+
+    res.json({
+      message: signatureValid ? "Digital signature is valid" : "Digital signature is invalid",
+      result: {
+        signatureValid,
+        status: submission.status
+      },
+      submission
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      message: "Failed to verify submission",
+      error: error.message
+    });
+  }
 };
 
 const decryptSubmission = async (req, res) => {
-  res.status(501).json({ message: "Submission decryption controller not implemented yet" });
+  try {
+    const { privateKey } = req.body;
+
+    if (!privateKey) {
+      return res.status(400).json({ message: "Exam officer private key is required" });
+    }
+
+    const submission = await findAssignedSubmission(req.params.id, req.user._id);
+
+    if (!submission) {
+      return res.status(404).json({ message: "Submission not found" });
+    }
+
+    const signatureValid = verifyHashSignature(
+      submission.fileHash,
+      submission.digitalSignature,
+      submission.lecturer.publicKey
+    );
+
+    const sessionKey = decryptSessionKey(submission.encryptedSessionKey, privateKey);
+    const encryptedFile = await fs.readFile(submission.encryptedFilePath);
+    const decryptedFile = decryptFileBuffer({
+      encryptedFile,
+      sessionKey,
+      iv: submission.iv,
+      authTag: submission.authTag
+    });
+
+    const decryptedHash = hashBuffer(decryptedFile);
+    const integrityPassed = decryptedHash === submission.fileHash;
+    const decryptedSuccessfully = signatureValid && integrityPassed;
+
+    submission.status = decryptedSuccessfully ? "decrypted" : "rejected";
+    await submission.save();
+
+    await createAuditLog({
+      user: req.user._id,
+      action: "SUBMISSION_DECRYPTED",
+      resourceType: "Submission",
+      resourceId: submission._id.toString(),
+      status: decryptedSuccessfully ? "success" : "failure",
+      details: decryptedSuccessfully
+        ? "Paper decrypted and integrity check passed"
+        : "Paper decryption result failed validation",
+      ipAddress: req.ip
+    });
+
+    res.json({
+      message: decryptedSuccessfully
+        ? "Paper decrypted successfully"
+        : "Paper decrypted but validation failed",
+      result: {
+        signatureValid,
+        integrityPassed,
+        decryptedSuccessfully,
+        originalHash: submission.fileHash,
+        decryptedHash
+      },
+      file: decryptedSuccessfully
+        ? {
+            fileName: submission.originalFileName,
+            mimeType: submission.mimeType || "application/octet-stream",
+            contentBase64: decryptedFile.toString("base64")
+          }
+        : null,
+      submission
+    });
+  } catch (error) {
+    await createAuditLog({
+      user: req.user?._id,
+      action: "SUBMISSION_DECRYPTED",
+      resourceType: "Submission",
+      resourceId: req.params.id,
+      status: "failure",
+      details: error.message,
+      ipAddress: req.ip
+    });
+
+    res.status(error.statusCode || 500).json({
+      message: "Failed to decrypt submission",
+      error: error.message
+    });
+  }
 };
 
 module.exports = {

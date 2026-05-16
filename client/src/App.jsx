@@ -11,6 +11,9 @@ import KeyManagement from "./pages/KeyManagement.jsx";
 import PublicKeys from "./pages/PublicKeys.jsx";
 import LecturerUpload from "./pages/LecturerUpload.jsx";
 import LecturerSubmissions from "./pages/LecturerSubmissions.jsx";
+import ExamOfficerReceived from "./pages/ExamOfficerReceived.jsx";
+import ExamOfficerVerify from "./pages/ExamOfficerVerify.jsx";
+import ExamOfficerDecrypt from "./pages/ExamOfficerDecrypt.jsx";
 
 function App() {
   return (
@@ -63,11 +66,7 @@ function App() {
           path="/exam-officer/received"
           element={
             <ProtectedRoute allowedRoles={["exam_officer"]}>
-              <FeaturePlaceholder
-                title="Received Papers"
-                subtitle="Only exam officers can access papers assigned to them."
-                backTo="/exam-officer"
-              />
+              <ExamOfficerReceived />
             </ProtectedRoute>
           }
         />
@@ -75,11 +74,7 @@ function App() {
           path="/exam-officer/verify"
           element={
             <ProtectedRoute allowedRoles={["exam_officer"]}>
-              <FeaturePlaceholder
-                title="Verify Papers"
-                subtitle="Only exam officers can verify paper signatures and integrity."
-                backTo="/exam-officer"
-              />
+              <ExamOfficerVerify />
             </ProtectedRoute>
           }
         />
@@ -87,11 +82,7 @@ function App() {
           path="/exam-officer/decrypt"
           element={
             <ProtectedRoute allowedRoles={["exam_officer"]}>
-              <FeaturePlaceholder
-                title="Decrypt Papers"
-                subtitle="Only exam officers can decrypt papers intended for them."
-                backTo="/exam-officer"
-              />
+              <ExamOfficerDecrypt />
             </ProtectedRoute>
           }
         />

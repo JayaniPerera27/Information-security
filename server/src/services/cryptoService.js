@@ -28,6 +28,14 @@ const signHash = (hash, privateKey) => {
   }).toString("base64");
 };
 
+const verifyHashSignature = (hash, signature, publicKey) => {
+  return crypto.verify("sha256", Buffer.from(hash, "hex"), {
+    key: publicKey,
+    padding: crypto.constants.RSA_PKCS1_PSS_PADDING,
+    saltLength: 32
+  }, Buffer.from(signature, "base64"));
+};
+
 const encryptFileBuffer = (buffer) => {
   const sessionKey = crypto.randomBytes(32);
   const iv = crypto.randomBytes(12);
@@ -54,10 +62,31 @@ const encryptSessionKey = (sessionKey, publicKey) => {
   ).toString("base64");
 };
 
+const decryptSessionKey = (encryptedSessionKey, privateKey) => {
+  return crypto.privateDecrypt(
+    {
+      key: privateKey,
+      padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+      oaepHash: "sha256"
+    },
+    Buffer.from(encryptedSessionKey, "base64")
+  );
+};
+
+const decryptFileBuffer = ({ encryptedFile, sessionKey, iv, authTag }) => {
+  const decipher = crypto.createDecipheriv("aes-256-gcm", sessionKey, Buffer.from(iv, "base64"));
+  decipher.setAuthTag(Buffer.from(authTag, "base64"));
+
+  return Buffer.concat([decipher.update(encryptedFile), decipher.final()]);
+};
+
 module.exports = {
   generateRsaKeyPair,
   hashBuffer,
   signHash,
+  verifyHashSignature,
   encryptFileBuffer,
-  encryptSessionKey
+  encryptSessionKey,
+  decryptSessionKey,
+  decryptFileBuffer
 };

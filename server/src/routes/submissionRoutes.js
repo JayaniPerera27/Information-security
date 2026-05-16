@@ -1,4 +1,7 @@
 const express = require("express");
+const authenticate = require("../middleware/authMiddleware");
+const authorizeRoles = require("../middleware/roleMiddleware");
+const upload = require("../middleware/uploadMiddleware");
 const {
   createSubmission,
   getSubmissions,
@@ -9,10 +12,12 @@ const {
 
 const router = express.Router();
 
-router.post("/", createSubmission);
-router.get("/", getSubmissions);
-router.get("/:id", getSubmissionById);
-router.post("/:id/verify", verifySubmission);
-router.post("/:id/decrypt", decryptSubmission);
+router.use(authenticate);
+
+router.post("/", authorizeRoles("lecturer"), upload.single("paper"), createSubmission);
+router.get("/", authorizeRoles("lecturer", "exam_officer"), getSubmissions);
+router.get("/:id", authorizeRoles("lecturer", "exam_officer"), getSubmissionById);
+router.post("/:id/verify", authorizeRoles("exam_officer"), verifySubmission);
+router.post("/:id/decrypt", authorizeRoles("exam_officer"), decryptSubmission);
 
 module.exports = router;

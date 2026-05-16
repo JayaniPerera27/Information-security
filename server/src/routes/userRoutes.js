@@ -14,8 +14,8 @@ const router = express.Router();
 
 router.use(authenticate);
 
-router.post("/me/key-pair", authorizeRoles("admin", "lecturer", "exam_officer"), generateMyKeyPair);
-router.put("/me/public-key", authorizeRoles("admin", "lecturer", "exam_officer"), updateMyPublicKey);
+router.post("/me/key-pair", authorizeRoles("lecturer", "exam_officer"), generateMyKeyPair);
+router.put("/me/public-key", authorizeRoles("lecturer", "exam_officer"), updateMyPublicKey);
 router.get("/public-keys", authorizeRoles("admin"), getPublicKeys);
 router.get("/exam-officers", authorizeRoles("lecturer", "admin"), getExamOfficers);
 router.get("/", authorizeRoles("admin"), getUsers);

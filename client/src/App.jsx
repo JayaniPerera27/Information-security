@@ -14,6 +14,7 @@ import LecturerSubmissions from "./pages/LecturerSubmissions.jsx";
 import ExamOfficerReceived from "./pages/ExamOfficerReceived.jsx";
 import ExamOfficerVerify from "./pages/ExamOfficerVerify.jsx";
 import ExamOfficerDecrypt from "./pages/ExamOfficerDecrypt.jsx";
+import AuditLogs from "./pages/AuditLogs.jsx";
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
         <Route
           path="/account/keys"
           element={
-            <ProtectedRoute allowedRoles={["admin", "lecturer", "exam_officer"]}>
+            <ProtectedRoute allowedRoles={["lecturer", "exam_officer"]}>
               <KeyManagement />
             </ProtectedRoute>
           }
@@ -118,11 +119,7 @@ function App() {
           path="/admin/audit-logs"
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
-              <FeaturePlaceholder
-                title="Audit Logs"
-                subtitle="Only admins can view system audit records."
-                backTo="/admin"
-              />
+              <AuditLogs />
             </ProtectedRoute>
           }
         />

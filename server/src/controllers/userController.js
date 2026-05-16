@@ -70,6 +70,17 @@ const generateMyKeyPair = async (req, res) => {
       { new: true }
     ).select("-passwordHash");
 
+    const { createAuditLog } = require("../services/auditService");
+    await createAuditLog({
+      user: req.user._id,
+      action: "KEY_PAIR_GENERATED",
+      resourceType: "User",
+      resourceId: req.user._id.toString(),
+      status: "success",
+      details: "User generated a new RSA key pair; public key stored only",
+      ipAddress: req.ip
+    });
+
     res.status(201).json({
       message: "Key pair generated successfully. Store the private key securely.",
       user,
@@ -97,6 +108,17 @@ const updateMyPublicKey = async (req, res) => {
       },
       { new: true }
     ).select("-passwordHash");
+
+    const { createAuditLog } = require("../services/auditService");
+    await createAuditLog({
+      user: req.user._id,
+      action: "PUBLIC_KEY_UPDATED",
+      resourceType: "User",
+      resourceId: req.user._id.toString(),
+      status: "success",
+      details: "User updated their public key",
+      ipAddress: req.ip
+    });
 
     res.json({
       message: "Public key updated successfully",

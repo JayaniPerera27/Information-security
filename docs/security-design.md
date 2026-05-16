@@ -73,3 +73,23 @@ When an exam officer receives a submitted paper:
 8. The system reports whether the signature is valid, integrity check passed, and decryption succeeded.
 9. If all checks pass, the decrypted paper is returned to the officer for download.
 10. Verification and decryption events are recorded in audit logs.
+
+## Audit Logging
+
+The system records important security events so the admin can review user activity and investigate suspicious behavior.
+
+Logged events include:
+
+- User registration
+- Successful login
+- Failed login
+- Unauthorized access attempt
+- Key pair generation
+- Public key update
+- Paper upload
+- Paper encryption
+- Paper submission
+- Paper signature verification
+- Paper decryption
+
+Each audit record stores the user when available, action name, resource type, resource ID, status, details, IP address, and timestamp.

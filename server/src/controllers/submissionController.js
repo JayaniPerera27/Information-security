@@ -47,6 +47,16 @@ const createSubmission = async (req, res) => {
 
     const fileHash = hashBuffer(req.file.buffer);
     const digitalSignature = signHash(fileHash, privateKey);
+
+    await createAuditLog({
+      user: req.user._id,
+      action: "PAPER_UPLOADED",
+      resourceType: "Submission",
+      status: "success",
+      details: `Original file received: ${req.file.originalname}`,
+      ipAddress: req.ip
+    });
+
     const { encryptedFile, sessionKey, iv, authTag } = encryptFileBuffer(req.file.buffer);
     const encryptedSessionKey = encryptSessionKey(sessionKey, examOfficer.publicKey);
 
@@ -73,6 +83,16 @@ const createSubmission = async (req, res) => {
       authTag,
       iv,
       status: "submitted"
+    });
+
+    await createAuditLog({
+      user: req.user._id,
+      action: "PAPER_ENCRYPTED",
+      resourceType: "Submission",
+      resourceId: submission._id.toString(),
+      status: "success",
+      details: `Paper encrypted with AES-256-GCM and AES key encrypted for ${examOfficer.email}`,
+      ipAddress: req.ip
     });
 
     await createAuditLog({

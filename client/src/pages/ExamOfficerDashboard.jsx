@@ -1,9 +1,14 @@
+import React from "react";
+import DashboardHeader from "../components/DashboardHeader.jsx";
+
 function ExamOfficerDashboard() {
   return (
-    <main className="page-shell">
-      <section className="panel">
-        <h1>Exam Officer Dashboard</h1>
-        <p>Receive, verify, and decrypt submitted exam papers from here.</p>
+    <main className="dashboard-shell">
+      <section className="dashboard-panel">
+        <DashboardHeader
+          title="Exam Officer Dashboard"
+          subtitle="Receive, verify, and decrypt submitted exam papers from here."
+        />
       </section>
     </main>
   );

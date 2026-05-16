@@ -1,9 +1,14 @@
+import React from "react";
+import DashboardHeader from "../components/DashboardHeader.jsx";
+
 function LecturerDashboard() {
   return (
-    <main className="page-shell">
-      <section className="panel">
-        <h1>Lecturer Dashboard</h1>
-        <p>Upload, encrypt, and sign exam papers from here.</p>
+    <main className="dashboard-shell">
+      <section className="dashboard-panel">
+        <DashboardHeader
+          title="Lecturer Dashboard"
+          subtitle="Upload, encrypt, and sign exam papers from here."
+        />
       </section>
     </main>
   );

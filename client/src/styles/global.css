@@ -33,3 +33,146 @@ body {
   margin: 0;
   line-height: 1.6;
 }
+
+a {
+  color: #1d4ed8;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+.auth-page {
+  background: #edf2f7;
+}
+
+.auth-panel {
+  display: grid;
+  gap: 24px;
+}
+
+.compact-panel {
+  width: min(360px, 100%);
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.auth-form input,
+.auth-form select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #111827;
+}
+
+.primary-button,
+.icon-text-button {
+  min-height: 44px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.primary-button {
+  width: 100%;
+  padding: 10px 16px;
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.primary-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.icon-text-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.form-error {
+  padding: 10px 12px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.auth-switch {
+  text-align: center;
+}
+
+.dashboard-shell {
+  min-height: 100vh;
+  padding: 32px;
+  background: #f4f7fb;
+}
+
+.dashboard-panel {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  padding: 28px;
+  border: 1px solid #d8dee9;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.dashboard-header h1 {
+  margin: 0 0 8px;
+  font-size: 28px;
+}
+
+.dashboard-header p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .dashboard-shell {
+    padding: 20px;
+  }
+
+  .dashboard-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

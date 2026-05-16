@@ -15,6 +15,7 @@ import ExamOfficerReceived from "./pages/ExamOfficerReceived.jsx";
 import ExamOfficerVerify from "./pages/ExamOfficerVerify.jsx";
 import ExamOfficerDecrypt from "./pages/ExamOfficerDecrypt.jsx";
 import AuditLogs from "./pages/AuditLogs.jsx";
+import SecurityTests from "./pages/SecurityTests.jsx";
 
 function App() {
   return (
@@ -120,6 +121,14 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
               <AuditLogs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/security-tests"
+          element={
+            <ProtectedRoute allowedRoles={["admin"]}>
+              <SecurityTests />
             </ProtectedRoute>
           }
         />

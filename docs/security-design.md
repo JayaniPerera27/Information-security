@@ -93,3 +93,27 @@ Logged events include:
 - Paper decryption
 
 Each audit record stores the user when available, action name, resource type, resource ID, status, details, IP address, and timestamp.
+
+## Security Testing
+
+The system includes an admin-only Security Tests page for controlled testing.
+
+Normal cases to test:
+
+1. Lecturer logs in successfully.
+2. Lecturer uploads an exam paper.
+3. Paper is encrypted and stored as an encrypted file.
+4. Exam officer receives only assigned submissions.
+5. Signature verification succeeds for an unchanged submission.
+6. Paper decrypts successfully using the correct exam officer private key.
+
+Attack cases to test:
+
+1. Wrong user tries to access paper and receives a forbidden response.
+2. Modified encrypted file is rejected during AES-GCM decryption.
+3. Modified digital signature fails verification.
+4. Wrong private key cannot decrypt the AES session key.
+5. Invalid login fails and is recorded in audit logs.
+6. Replayed old submission is detected because the submission code already exists.
+
+Tamper simulations should be run only on test submissions because they intentionally modify stored test data.

@@ -70,6 +70,7 @@ const createSubmission = async (req, res) => {
 
     const submission = await Submission.create({
       title: title.trim(),
+      submissionCode: cryptoSafeSubmissionCode(),
       courseCode: courseCode.trim(),
       lecturer: req.user._id,
       examOfficer: examOfficer._id,
@@ -126,6 +127,8 @@ const createSubmission = async (req, res) => {
     res.status(500).json({ message: "Failed to submit exam paper", error: error.message });
   }
 };
+
+const cryptoSafeSubmissionCode = () => `SUB-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 
 const getSubmissions = async (req, res) => {
   try {
@@ -308,6 +311,25 @@ const decryptSubmission = async (req, res) => {
       submission
     });
   } catch (error) {
+    let clientMessage = "Failed to decrypt submission";
+    let result = {
+      signatureValid: false,
+      integrityPassed: false,
+      decryptedSuccessfully: false
+    };
+    let statusCode = error.statusCode || 500;
+
+    if (error.message.includes("oaep decoding error")) {
+      clientMessage =
+        "Wrong private key. Use the exam officer private key that matches the public key used when this paper was uploaded.";
+      statusCode = 400;
+    }
+
+    if (error.message.includes("Unsupported state or unable to authenticate data")) {
+      clientMessage = "Encrypted paper was modified or corrupted. AES-GCM authentication rejected the file.";
+      statusCode = 400;
+    }
+
     await createAuditLog({
       user: req.user?._id,
       action: "SUBMISSION_DECRYPTED",
@@ -318,9 +340,10 @@ const decryptSubmission = async (req, res) => {
       ipAddress: req.ip
     });
 
-    res.status(error.statusCode || 500).json({
-      message: "Failed to decrypt submission",
-      error: error.message
+    res.status(statusCode).json({
+      message: clientMessage,
+      error: error.message,
+      result
     });
   }
 };

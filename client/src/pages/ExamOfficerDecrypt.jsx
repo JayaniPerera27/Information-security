@@ -47,6 +47,7 @@ function ExamOfficerDecrypt() {
       setResult(response.data.result);
       setFile(response.data.file);
     } catch (err) {
+      setResult(err.response?.data?.result || null);
       setError(err.response?.data?.message || "Decryption failed");
     } finally {
       setLoading(false);

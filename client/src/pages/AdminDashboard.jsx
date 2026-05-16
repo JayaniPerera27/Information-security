@@ -1,5 +1,5 @@
 import React from "react";
-import { KeySquare, ScrollText, Users } from "lucide-react";
+import { KeySquare, ScrollText, ShieldAlert, Users } from "lucide-react";
 import DashboardHeader from "../components/DashboardHeader.jsx";
 import FeatureGrid from "../components/FeatureGrid.jsx";
 
@@ -21,6 +21,12 @@ const adminFeatures = [
     description: "Inspect authentication and paper workflow events.",
     path: "/admin/audit-logs",
     icon: ScrollText
+  },
+  {
+    title: "Security Tests",
+    description: "Run normal and attack scenario checks.",
+    path: "/admin/security-tests",
+    icon: ShieldAlert
   }
 ];
 

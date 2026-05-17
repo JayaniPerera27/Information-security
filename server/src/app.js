@@ -6,6 +6,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const submissionRoutes = require("./routes/submissionRoutes");
 const auditLogRoutes = require("./routes/auditLogRoutes");
+const securityTestRoutes = require("./routes/securityTestRoutes");
 
 dotenv.config();
 
@@ -22,5 +23,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/submissions", submissionRoutes);
 app.use("/api/audit-logs", auditLogRoutes);
+app.use("/api/security-tests", securityTestRoutes);
 
 module.exports = app;

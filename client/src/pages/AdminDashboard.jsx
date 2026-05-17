@@ -1,9 +1,44 @@
+import React from "react";
+import { KeySquare, ScrollText, ShieldAlert, Users } from "lucide-react";
+import DashboardHeader from "../components/DashboardHeader.jsx";
+import FeatureGrid from "../components/FeatureGrid.jsx";
+
+const adminFeatures = [
+  {
+    title: "Users",
+    description: "Manage lecturer, exam officer, and admin accounts.",
+    path: "/admin/users",
+    icon: Users
+  },
+  {
+    title: "Public Keys",
+    description: "Review registered public keys for users.",
+    path: "/admin/public-keys",
+    icon: KeySquare
+  },
+  {
+    title: "Audit Logs",
+    description: "Inspect authentication and paper workflow events.",
+    path: "/admin/audit-logs",
+    icon: ScrollText
+  },
+  {
+    title: "Security Tests",
+    description: "Run normal and attack scenario checks.",
+    path: "/admin/security-tests",
+    icon: ShieldAlert
+  }
+];
+
 function AdminDashboard() {
   return (
-    <main className="page-shell">
-      <section className="panel">
-        <h1>Admin Dashboard</h1>
-        <p>Manage users, roles, public keys, and audit logs from here.</p>
+    <main className="dashboard-shell">
+      <section className="dashboard-panel">
+        <DashboardHeader
+          title="Admin Dashboard"
+          subtitle="Manage users, roles, public keys, and audit logs from here."
+        />
+        <FeatureGrid features={adminFeatures} />
       </section>
     </main>
   );

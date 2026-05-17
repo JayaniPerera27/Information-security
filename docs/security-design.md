@@ -33,3 +33,87 @@
 - Digital signature: RSA-PSS or RSA with SHA-256
 - Hashing: SHA-256
 - Transport security: HTTPS/TLS in deployment
+
+## Key Management
+
+Each user can generate an RSA public/private key pair from the system.
+
+- The public key is stored in MongoDB with the user account.
+- The private key is returned once to the user for download.
+- The private key is not stored in MongoDB.
+- In the project demonstration, users are responsible for keeping the downloaded private key safe.
+- In a real production system, private keys should be protected using secure hardware, an operating-system key store, or another trusted key-management solution.
+
+## Lecturer Upload Workflow
+
+When a lecturer submits an exam paper:
+
+1. The lecturer selects a course/module and exam officer.
+2. The lecturer uploads the exam paper and selects their private key file.
+3. The backend calculates a SHA-256 hash of the original paper.
+4. The hash is digitally signed using the lecturer's private key.
+5. A random AES-256 session key and IV are generated.
+6. The exam paper is encrypted using AES-256-GCM.
+7. The AES session key is encrypted using the selected exam officer's public key with RSA-OAEP.
+8. The encrypted paper is stored in local encrypted storage.
+9. Submission metadata, encrypted session key, hash, signature, IV, and authentication tag are stored in MongoDB.
+10. An audit log is created for the submission event.
+
+## Exam Officer Receive Workflow
+
+When an exam officer receives a submitted paper:
+
+1. The exam officer logs in and views only submissions assigned to their account.
+2. The officer can verify the lecturer's digital signature using the lecturer's stored public key.
+3. The officer selects their private key file when decrypting the paper.
+4. The backend decrypts the AES session key using the exam officer's private key.
+5. The backend decrypts the encrypted paper using AES-256-GCM.
+6. The backend recalculates the SHA-256 hash of the decrypted paper.
+7. The recalculated hash is compared with the original stored hash.
+8. The system reports whether the signature is valid, integrity check passed, and decryption succeeded.
+9. If all checks pass, the decrypted paper is returned to the officer for download.
+10. Verification and decryption events are recorded in audit logs.
+
+## Audit Logging
+
+The system records important security events so the admin can review user activity and investigate suspicious behavior.
+
+Logged events include:
+
+- User registration
+- Successful login
+- Failed login
+- Unauthorized access attempt
+- Key pair generation
+- Public key update
+- Paper upload
+- Paper encryption
+- Paper submission
+- Paper signature verification
+- Paper decryption
+
+Each audit record stores the user when available, action name, resource type, resource ID, status, details, IP address, and timestamp.
+
+## Security Testing
+
+The system includes an admin-only Security Tests page for controlled testing.
+
+Normal cases to test:
+
+1. Lecturer logs in successfully.
+2. Lecturer uploads an exam paper.
+3. Paper is encrypted and stored as an encrypted file.
+4. Exam officer receives only assigned submissions.
+5. Signature verification succeeds for an unchanged submission.
+6. Paper decrypts successfully using the correct exam officer private key.
+
+Attack cases to test:
+
+1. Wrong user tries to access paper and receives a forbidden response.
+2. Modified encrypted file is rejected during AES-GCM decryption.
+3. Modified digital signature fails verification.
+4. Wrong private key cannot decrypt the AES session key.
+5. Invalid login fails and is recorded in audit logs.
+6. Replayed old submission is detected because the submission code already exists.
+
+Tamper simulations should be run only on test submissions because they intentionally modify stored test data.

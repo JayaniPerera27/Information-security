@@ -10,7 +10,8 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "lecturer", "exam_officer"],
       required: true
     },
-    publicKey: { type: String }
+    publicKey: { type: String },
+    keyGeneratedAt: { type: Date }
   },
   { timestamps: true }
 );

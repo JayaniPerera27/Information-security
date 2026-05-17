@@ -9,7 +9,7 @@ function DashboardHeader({ title, subtitle }) {
 
   const handleLogout = () => {
     logout();
-    navigate("/login", { replace: true });
+    navigate("/", { replace: true });
   };
 
   return (

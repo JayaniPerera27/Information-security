@@ -81,7 +81,7 @@ function Landing() {
           <p className="eyebrow">Information Security Project</p>
           <h1>Secure Exam Paper Distribution System</h1>
           <p>
-            A cryptography-focused MERN application for safely submitting, verifying, and decrypting exam papers
+            A cryptography-focused application for safely submitting, verifying, and decrypting exam papers
             between lecturers and exam officers.
           </p>
           <div className="hero-actions">

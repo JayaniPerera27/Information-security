@@ -21,7 +21,7 @@ function DashboardHeader({ title, subtitle }) {
       </div>
       <button className="icon-text-button" type="button" onClick={handleLogout}>
         <LogOut size={18} />
-        Logout
+        Logout  // Logout the current user
       </button>
     </header>
   );

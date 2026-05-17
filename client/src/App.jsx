@@ -3,10 +3,10 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import Landing from "./pages/Landing.jsx";
 import LecturerDashboard from "./pages/LecturerDashboard.jsx";
 import ExamOfficerDashboard from "./pages/ExamOfficerDashboard.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
-import FeaturePlaceholder from "./pages/FeaturePlaceholder.jsx";
 import KeyManagement from "./pages/KeyManagement.jsx";
 import PublicKeys from "./pages/PublicKeys.jsx";
 import LecturerUpload from "./pages/LecturerUpload.jsx";
@@ -16,12 +16,13 @@ import ExamOfficerVerify from "./pages/ExamOfficerVerify.jsx";
 import ExamOfficerDecrypt from "./pages/ExamOfficerDecrypt.jsx";
 import AuditLogs from "./pages/AuditLogs.jsx";
 import SecurityTests from "./pages/SecurityTests.jsx";
+import UserManagement from "./pages/UserManagement.jsx";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
@@ -100,11 +101,7 @@ function App() {
           path="/admin/users"
           element={
             <ProtectedRoute allowedRoles={["admin"]}>
-              <FeaturePlaceholder
-                title="Users"
-                subtitle="Only admins can manage users and roles."
-                backTo="/admin"
-              />
+              <UserManagement />
             </ProtectedRoute>
           }
         />
